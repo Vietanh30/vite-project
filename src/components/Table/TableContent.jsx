@@ -35,9 +35,8 @@ export const TableContent = ({
                         onMouseDown={(e) => handleMouseDown(index, e)}
                         onMouseOver={(e) => handleMouseOver(index, e)}
                         className={`
-                            ${selectedRows.has(row.original.id) ? "bg-blue-200" : ""}
-                            hover:bg-muted/50
-                            data-[state=selected]:bg-muted
+                            ${selectedRows.has(row.original.id) ? "bg-blue-200 hover:bg-blue-400" : ""}
+                            data-[state=selected]:bg-muted 
                           `}
                     >
                         {row.getVisibleCells().map((cell) => (

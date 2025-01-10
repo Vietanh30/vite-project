@@ -8,8 +8,8 @@ import { TablePagination } from "@/components/Table/TablePagination"
 // import { columns, data } from "@/components/Table/TableData"
 import { useTableLogic } from "@/components/Table/useTableLogic"
 import { getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
-import AddDataDialog from "@/components/Table/AddDataDialog"
 import ExportButton from "@/components/Table/ExportButton"
+import AddDataDialog from "@/components/Table/AddDataDialog"
 
 
 const TableDemo = ({ data, columns }) => {
@@ -33,12 +33,6 @@ const TableDemo = ({ data, columns }) => {
     const [columnVisibility, setColumnVisibility] = React.useState({})
     const [rowSelection, setRowSelection] = React.useState({})
     const [tableData, setTableData] = React.useState(data)
-    const [newRowData, setNewRowData] = React.useState({
-        email: '',
-        amount: '',
-        status: 'pending'
-    })
-    const [isDialogOpen, setIsDialogOpen] = React.useState(false)
     const table = useReactTable({
         data: tableData,
         columns,
@@ -63,16 +57,8 @@ const TableDemo = ({ data, columns }) => {
     })
 
     // Hàm xử lý thêm dữ liệu mới
-    const handleAddData = () => {
-        const newRow = {
-            id: `id-${Math.random().toString(36).substr(2, 9)}`,
-            ...newRowData,
-        }
-        console.log("newRow", newRow);
-        setTableData((prev) => [...prev, newRow])
-        setNewRowData({ email: "", amount: "", status: "pending" })
-        setIsDialogOpen(false)
-
+    const handleAddData = (newRows) => {
+        setTableData(prev => [...prev, ...newRows])
     }
 
     return (
@@ -92,8 +78,7 @@ const TableDemo = ({ data, columns }) => {
                             <ExportButton tableData={tableData} />
 
                             <AddDataDialog
-                                newRowData={newRowData}
-                                setNewRowData={setNewRowData}
+                                tableData={tableData}
                                 handleAddData={handleAddData}
                             />
                         </div>

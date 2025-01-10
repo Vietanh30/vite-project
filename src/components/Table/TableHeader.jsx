@@ -1,18 +1,14 @@
 // components/Table/TableHeader.jsx
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ChevronDown } from "lucide-react"
+import GlobalFilter from "./GlobalFilter"
 
 export const TableHeader = ({ table }) => {
   return (
-    <div className="flex justify-between">  
-      <Input
-        placeholder="Filter decriptions..."
-        value={(table.getColumn("email")?.getFilterValue() || "")}
-        onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
-        className="max-w-sm"
-      />
+    <div className="flex justify-between">
+      <GlobalFilter table={table} />
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="ml-auto">

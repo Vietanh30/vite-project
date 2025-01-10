@@ -1,3 +1,4 @@
+// AddDataDialog.jsx
 import React from "react"
 import { Button } from "@/components/ui/button"
 import {
@@ -9,10 +10,54 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
-const AddDataDialog = ({ newRowData, setNewRowData, handleAddData }) => {
+const AddDataDialog = ({ tableData, handleAddData }) => {
     const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+    const [inputData, setInputData] = React.useState("")
+    const [error, setError] = React.useState("")
+
+    // Get all possible fields from table data
+    const fields = React.useMemo(() => {
+        if (!tableData || !tableData.length) return []
+        const fieldSet = new Set()
+        tableData.forEach(row => {
+            Object.keys(row).forEach(field => fieldSet.add(field))
+        })
+        return Array.from(fieldSet)
+    }, [tableData])
+
+    const formatString = fields.join(' | ')
+    const exampleData = fields.map(field => `value_${field}`).join(' | ')
+
+    const handleSubmit = () => {
+        try {
+            const rows = inputData.trim().split('\n')
+            const newData = rows.map(row => {
+                const values = row.split('|').map(v => v.trim())
+                const newRow = {}
+
+                fields.forEach((field, index) => {
+                    newRow[field] = values[index] || ''
+                })
+
+                // Generate ID if not provided
+                if (!newRow.id) {
+                    newRow.id = `id-${Math.random().toString(36).substr(2, 9)}`
+                }
+
+                return newRow
+            })
+
+            handleAddData(newData)
+            setInputData("")
+            setError("")
+            setIsDialogOpen(false)
+        } catch (err) {
+            setError("Invalid format. Please use pipe (|) to separate values and match the field format shown above.")
+        }
+    }
 
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -21,71 +66,36 @@ const AddDataDialog = ({ newRowData, setNewRowData, handleAddData }) => {
                     Add Data
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[525px]">
                 <DialogHeader>
                     <DialogTitle>Add New Data</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="email" className="text-right">
-                            Email
+                    <div className="grid gap-2">
+                        <Label className="text-sm font-medium">
+                            Format: {formatString}
                         </Label>
-                        <Input
-                            id="email"
-                            className="col-span-3"
-                            value={newRowData.email}
-                            onChange={(e) =>
-                                setNewRowData((prev) => ({
-                                    ...prev,
-                                    email: e.target.value,
-                                }))
-                            }
+                        <Textarea
+                            className="h-40 font-mono"
+                            placeholder={`Example:\n${exampleData}`}
+                            value={inputData}
+                            onChange={(e) => setInputData(e.target.value)}
                         />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="amount" className="text-right">
-                            Amount
-                        </Label>
-                        <Input
-                            id="amount"
-                            type="number"
-                            className="col-span-3"
-                            value={newRowData.amount}
-                            onChange={(e) =>
-                                setNewRowData((prev) => ({
-                                    ...prev,
-                                    amount: parseInt(e.target.value),
-                                }))
-                            }
-                        />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="status" className="text-right">
-                            Status
-                        </Label>
-                        <select
-                            id="status"
-                            className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2"
-                            value={newRowData.status}
-                            onChange={(e) =>
-                                setNewRowData((prev) => ({
-                                    ...prev,
-                                    status: e.target.value,
-                                }))
-                            }
-                        >
-                            <option value="success">Success</option>
-                            <option value="processing">Processing</option>
-                            <option value="failed">Failed</option>
-                        </select>
+                        <div className="text-sm text-muted-foreground">
+                            Enter each row of data separated by | following the format above
+                        </div>
+                        {error && (
+                            <Alert variant="destructive">
+                                <AlertDescription>{error}</AlertDescription>
+                            </Alert>
+                        )}
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleAddData}>Add Row</Button>
+                    <Button onClick={handleSubmit}>Add Rows</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
     )
 }
-
 export default AddDataDialog
