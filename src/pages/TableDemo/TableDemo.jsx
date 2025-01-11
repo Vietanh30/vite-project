@@ -26,7 +26,6 @@ const TableDemo = ({ data, columns }) => {
         handleUncheckSelected,
         handleSelectAll,
         handleUnselectAll,
-        handleInvertSelection
     } = useTableLogic(data)
     const [sorting, setSorting] = React.useState([])
     const [columnFilters, setColumnFilters] = React.useState([])
@@ -57,9 +56,9 @@ const TableDemo = ({ data, columns }) => {
     })
 
     // Hàm xử lý thêm dữ liệu mới
-    const handleAddData = (newRows) => {
-        setTableData(prev => [...prev, ...newRows])
-    }
+    // const handleAddData = (newRows) => {
+    //     setTableData(prev => [...prev, ...newRows])
+    // }
 
     return (
         <>
@@ -77,10 +76,7 @@ const TableDemo = ({ data, columns }) => {
                             <TableHeader table={table} />
                             <ExportButton tableData={tableData} />
 
-                            <AddDataDialog
-                                tableData={tableData}
-                                handleAddData={handleAddData}
-                            />
+
                         </div>
                     </div>
                     <div className="border rounded">
@@ -106,12 +102,6 @@ const TableDemo = ({ data, columns }) => {
                                     Unselect All Rows
                                     <ContextMenuShortcut>⌘D</ContextMenuShortcut>
                                 </ContextMenuItem>
-
-                                <ContextMenuItem onClick={handleInvertSelection}>
-                                    Invert Selection
-                                    <ContextMenuShortcut>⌘I</ContextMenuShortcut>
-                                </ContextMenuItem>
-
                                 {selectedRows.size > 0 && (
                                     <>
                                         <ContextMenuSeparator />

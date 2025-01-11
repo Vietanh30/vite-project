@@ -88,28 +88,20 @@ export const useTableLogic = (data) => {
         [isMouseDown, dragStartIndex, data]
     )
 
-    // Các hàm xử lý selection hiện tại
+    // Sửa handleSelectAll để check tất cả các rows
     const handleSelectAll = React.useCallback(() => {
-        const newSelectedRows = new Map()
+        const newCheckedItems = new Map()
         data.forEach(row => {
-            newSelectedRows.set(row.id, row)
+            newCheckedItems.set(row.id, row)
         })
-        setSelectedRows(newSelectedRows)
+        setCheckedItems(newCheckedItems)
     }, [data])
 
+    // Sửa handleUnselectAll để uncheck tất cả các rows
     const handleUnselectAll = React.useCallback(() => {
-        setSelectedRows(new Map())
+        setCheckedItems(new Map())
     }, [])
 
-    const handleInvertSelection = React.useCallback(() => {
-        const newSelectedRows = new Map()
-        data.forEach(row => {
-            if (!selectedRows.has(row.id)) {
-                newSelectedRows.set(row.id, row)
-            }
-        })
-        setSelectedRows(newSelectedRows)
-    }, [data, selectedRows])
 
     // Thêm các hàm mới để xử lý check/uncheck selected rows
     const handleCheckSelected = React.useCallback(() => {
@@ -143,7 +135,6 @@ export const useTableLogic = (data) => {
         handleCheckSelected,
         handleSelectAll,
         handleUnselectAll,
-        handleInvertSelection,
         handleUncheckSelected
     }
 }

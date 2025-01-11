@@ -2,32 +2,13 @@ import React from "react"
 import { Input } from "@/components/ui/input"
 
 const GlobalFilter = ({ table }) => {
-    const [globalFilter, setGlobalFilter] = React.useState("")
+    // Use the table's built-in globalFilter state
+    const globalFilter = table.getState().globalFilter
 
-    // Lấy tất cả các trường từ columns
-    const columns = React.useMemo(() => {
-        return table.getAllColumns()
-            .filter(column => column.getCanFilter())
-            .map(column => column.id)
-    }, [table])
-
-    // Xử lý thay đổi giá trị tìm kiếm
+    // Use setGlobalFilter from table instance
     const handleFilterChange = (event) => {
-        const value = event.target.value;
-        setGlobalFilter(value);
-
-        // Log giá trị để kiểm tra
-        console.log("Global Filter Value: ", value);
-
-        // Áp dụng filter cho tất cả các cột
-        columns.forEach(columnId => {
-            const column = table.getColumn(columnId);
-            if (column) {
-                column.setFilterValue(value);
-                console.log(`Setting filter for ${columnId} to ${value}`);
-            }
-        });
-    };
+        table.setGlobalFilter(event.target.value)
+    }
     return (
         <Input
             placeholder="Search..."
